@@ -146,7 +146,7 @@ def mine():
     proof = blockchain.proof_of_work(last_proof)
 
     # We must receive a reward for finding the proof.
-    # The sender is "0" to signify that this node has mine a new coin
+    # The sender is "0" to signify that this node has mined a new coin
     blockchain.new_transaction(sender="0", recipient=node_identifier, amount=1)
 
     # Forge the new BLock by adding it to the chain
