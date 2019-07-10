@@ -77,7 +77,7 @@ class Blockchain(object):
     def proof_of_work(self, last_proof):
         """
         Simple Proof of Work Algorithm
-        - Find a number p' such that hash(pp') contains 4 leading
+        - Find a number p' such that hash(pp') contains 6 leading
         zeroes, where p is the previous p'
         - p is the previous proof, and p' is the new proof
         """
@@ -91,12 +91,12 @@ class Blockchain(object):
     @staticmethod
     def valid_proof(last_proof, proof):
         """
-        Validates the Proof:  Does hash(last_proof, proof) contain 4
+        Validates the Proof:  Does hash(last_proof, proof) contain 6
         leading zeroes?
         """
         guess = f"{last_proof}{proof}".encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
-        return guess_hash[:4] == "0000"
+        return guess_hash[:6] == "000000"
 
     def valid_chain(self, chain):
         """
