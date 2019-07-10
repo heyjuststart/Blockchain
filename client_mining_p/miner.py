@@ -1,6 +1,7 @@
 import hashlib
 import requests
 import json
+import time
 
 import sys
 
@@ -39,6 +40,8 @@ if __name__ == "__main__":
         node = "http://localhost:5000"
 
     coins_mined = 0
+    start_time = time.time()
+    last_time = start_time
     # Run forever until interrupted
     while True:
         # TODO: Get the last proof from the server and look for a new one
@@ -61,7 +64,8 @@ if __name__ == "__main__":
             # print the message from the server.
             if did_we_get_one:
                 coins_mined += 1
-                print(f"Found one! {next_proof}, number so far: {coins_mined}")
+                print(f"Found one! {next_proof}, #coins: {coins_mined}, time: {(time.time() - last_time) / 60} min")
+                last_time = time.time()
                 break
             else:
                 print("Nope!")
