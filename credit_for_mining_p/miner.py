@@ -1,7 +1,9 @@
 import hashlib
 import requests
+from uuid import uuid4
 
 import sys
+import os.path
 
 
 def proof_of_work(last_proof):
@@ -26,17 +28,31 @@ def valid_proof(last_proof, proof):
     Validates the Proof:  Does hash(last_proof, proof) contain 6
     leading zeroes?
     """
-    guess = f'{last_proof}{proof}'.encode()
+    guess = f"{last_proof}{proof}".encode()
     guess_hash = hashlib.sha256(guess).hexdigest()
     return guess_hash[:6] == "000000"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # What node are we interacting with?
     if len(sys.argv) > 1:
         node = int(sys.argv[1])
     else:
         node = "http://localhost:5000"
+
+    # Generate an id
+    my_id = str(uuid4()).replace("-", "")
+
+    # if the my_id file exists
+    if os.path.isfile("my_id"):
+        # open it
+        with open("my_id") as f:
+            # set my_id to the value inside
+            my_id = f.read().rstrip("\n")
+    else:
+        # otherwise, write the newly generated id to the my_id file
+        with open("my_id", "w") as f:
+            f.write(my_id)
 
     coins_mined = 0
     # Run forever until interrupted
@@ -44,14 +60,14 @@ if __name__ == '__main__':
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
         data = r.json()
-        new_proof = proof_of_work(data.get('proof'))
+        new_proof = proof_of_work(data.get("proof"))
 
-        post_data = {"proof": new_proof}
+        post_data = {"proof": new_proof, "id": my_id}
 
         r = requests.post(url=node + "/mine", json=post_data)
         data = r.json()
-        if data.get('message') == 'New Block Forged':
+        if data.get("message") == "New Block Forged":
             coins_mined += 1
             print("Total coins mined: " + str(coins_mined))
         else:
-            print(data.get('message'))
+            print(data.get("message"))
