@@ -141,6 +141,13 @@ blockchain = Blockchain()
 @app.route("/mine", methods=["POST"])
 def mine():
     values = request.get_json()
+
+    required = ['proof']
+
+    # Check that the required fields are in the POST'ed data
+    if not all(k in values for k in required):
+        return "Missing Values", 400
+
     proof = int(values["proof"])
     last_block = blockchain.last_block
     if Blockchain.valid_proof(last_block["proof"], proof):
