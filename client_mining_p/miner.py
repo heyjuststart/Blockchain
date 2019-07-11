@@ -47,26 +47,23 @@ if __name__ == "__main__":
         # TODO: Get the last proof from the server and look for a new one
         last_proof = requests.get(f"{node}/last_proof").json()["result"]
         # TODO: When found, POST it to the server {"proof": new_proof}
-        while True:
-            next_proof = proof_of_work(int(last_proof))
+        next_proof = proof_of_work(int(last_proof))
 
-            did_we_get_one = (
-                requests.post(
-                    f"{node}/mine",
-                    data=json.dumps({"proof": next_proof}),
-                    headers={"content-type": "application/json"},
-                ).status_code
-                == 200
-            )
+        did_we_get_one = (
+            requests.post(
+                f"{node}/mine",
+                data=json.dumps({"proof": next_proof}),
+                headers={"content-type": "application/json"},
+            ).status_code
+            == 200
+        )
 
-            # TODO: If the server responds with 'New Block Forged'
-            # add 1 to the number of coins mined and print it.  Otherwise,
-            # print the message from the server.
-            if did_we_get_one:
-                coins_mined += 1
-                print(f"Found one! {next_proof}, #coins: {coins_mined}, time: {(time.time() - last_time) / 60} min")
-                last_time = time.time()
-                break
-            else:
-                print("Nope!")
-                break
+        # TODO: If the server responds with 'New Block Forged'
+        # add 1 to the number of coins mined and print it.  Otherwise,
+        # print the message from the server.
+        if did_we_get_one:
+            coins_mined += 1
+            print(f"Found one! {next_proof}, #coins: {coins_mined}, time: {(time.time() - last_time) / 60} min")
+            last_time = time.time()
+        else:
+            print("Nope!")
